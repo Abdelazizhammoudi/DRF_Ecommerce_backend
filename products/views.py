@@ -1,0 +1,94 @@
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.shortcuts import get_object_or_404  # Import get_object_or_404
+from .models import Product, ProductImage
+from .serializers import ProductSerializer, ProductImageSerializer
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Add Product View (handles multiple images)
+class AddProduct(generics.CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = []
+    parser_classes = (MultiPartParser, FormParser)
+
+    def perform_create(self, serializer):
+        product = serializer.save()
+        images = self.request.FILES.getlist('images')
+        for image in images:
+            ProductImage.objects.create(product=product, image=image)
+
+# Update Product View
+class ModifyProduct(generics.UpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = []
+    parser_classes = (MultiPartParser, FormParser)
+
+# Delete Product View
+class DeleteProduct(generics.DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = []
+
+# List All Products View
+class ListProducts(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = []
+
+# Retrieve Single Product View
+class RetrieveProduct(generics.RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = []
+
+# Upload Product Image View
+class UploadProductImage(generics.CreateAPIView):
+    queryset = ProductImage.objects.all()
+    serializer_class = ProductImageSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+    def perform_create(self, serializer):
+        product = get_object_or_404(Product, pk=self.kwargs['pk'])
+        serializer.save(product=product)
+
+# Update Product Image View
+class UpdateProductImage(generics.UpdateAPIView):
+    queryset = ProductImage.objects.all()
+    serializer_class = ProductImageSerializer
+    permission_classes = []
+    parser_classes = (MultiPartParser, FormParser)
+    lookup_field = 'pk'
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            logger.error(f"Serializer errors: {serializer.errors}")
+            logger.error(f"Request data: {request.data}")
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Delete Product Image View
+class DeleteProductImage(generics.DestroyAPIView):
+    queryset = ProductImage.objects.all()
+    serializer_class = ProductImageSerializer
+    permission_classes = []
+    lookup_field = 'pk'
+
+    def delete(self, request, *args, **kwargs):
+        image = self.get_object()
+        image.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

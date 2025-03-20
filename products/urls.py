@@ -4,7 +4,7 @@ from django.urls import path
 from .views import AddProduct, ModifyProduct, DeleteProduct, ListProducts, RetrieveProduct, UploadProductImage, DeleteProductImage
 
 urlpatterns = [
-    path('product/', ListProducts.as_view(), name='list-products'),
+    path('product/list/', ListProducts.as_view(), name='list-products'),
     path('product/<int:pk>/', RetrieveProduct.as_view(), name='retrieve-product'),
     path('product/add/', AddProduct.as_view(), name='add-product'),
     path('product/<int:pk>/update/', ModifyProduct.as_view(), name='modify-product'),

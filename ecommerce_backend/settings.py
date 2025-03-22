@@ -27,12 +27,13 @@ SECRET_KEY = 'django-insecure-x-+af4an)od)u+%vxuiz9!4s=h+x_buy^$n956@!bbbwpv@i=c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'order',
     'products',
     'corsheaders',
     'rest_framework',
@@ -97,6 +98,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # React frontend
     "http://127.0.0.1:5173",
     "http://localhost:3000",  # React frontend
+    # "http://0.0.0.0:8000", 
+    "http://localhost:8000",  # Django backend
 ]
 
 CORS_ALLOW_METHODS = [
@@ -162,3 +165,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}

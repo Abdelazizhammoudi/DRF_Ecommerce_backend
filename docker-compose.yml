@@ -1,0 +1,24 @@
+# version: '3.8'
+
+services:
+  djangoserver:
+    container_name: djangoServer
+    build: .
+    command: python manage.py runserver 127.0.0.1:8000 # Run the server on
+    ports:
+      - "8000:8000"     # Expose the port 8000 means when i acces on my browser localhost:8000
+      #it will redirect to the container port 8000
+    volumes:
+      - .:/app # Mount the current directory to the /app directory in the container
+
+
+
+# Uncomment the following lines if you need a database service
+# services:
+#   db:
+#     image: postgres:13
+#     environment:
+#       POSTGRES_DB: mydb
+#       POSTGRES_USER: myuser
+#       POSTGRES_PASSWORD: mypassword
+

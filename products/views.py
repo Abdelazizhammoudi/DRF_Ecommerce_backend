@@ -5,6 +5,13 @@ from django.shortcuts import get_object_or_404  # Import get_object_or_404
 from .models import Product, ProductImage
 from .serializers import ProductSerializer, ProductImageSerializer
 import logging
+from rest_framework.permissions import IsAdminUser
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -92,3 +99,28 @@ class DeleteProductImage(generics.DestroyAPIView):
         image = self.get_object()
         image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AdminDashboardView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        return Response({'message': 'Welcome to the admin dashboard!'})
+
+class ValidateAdminView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated, IsAdminUser]  # Add IsAdminUser
+
+    def get(self, request):
+        try:
+            user_data = {
+                'username': request.user.username,
+                'password': request.user.password,
+                'isAdmin': True  # Explicitly set since IsAdminUser ensures this
+            }
+            return Response(user_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {'error': 'Validation failed'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

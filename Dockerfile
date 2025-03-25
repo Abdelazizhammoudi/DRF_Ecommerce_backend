@@ -21,3 +21,5 @@ RUN pip install -r ./app/requirements.txt
 #7: copy project code to docker kernal
 COPY . ./app/
 
+
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

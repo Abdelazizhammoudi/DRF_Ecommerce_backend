@@ -21,3 +21,12 @@ class ProductImage(models.Model):
         if self.image and hasattr(self.image, 'url'):
             return self.image.url  # Keep the leading slash
         return None
+
+
+# class User(models.Model):
+#     username = models.CharField(max_length=30, unique=True)
+#     email = models.EmailField(unique=True)
+#     password = models.CharField(max_length=100)
+
+#     def __str__(self):
+#         return self.username

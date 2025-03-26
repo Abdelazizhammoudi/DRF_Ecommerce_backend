@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from rest_framework.authtoken.views import obtain_auth_token
-from .views import(AddProduct, ModifyProduct, DeleteProduct, ListProducts,
- RetrieveProduct, UploadProductImage, DeleteProductImage, AdminDashboardView , ValidateAdminView)
+# from rest_framework.authtoken.views import obtain_auth_token
+from .views import (AddProduct, ModifyProduct, DeleteProduct, ListProducts,AdminLoginView,
+                    RetrieveProduct, UploadProductImage, DeleteProductImage)
+                    #  AdminDashboardView, ValidateAdminView, CustomLoginView)
 
 urlpatterns = [
     path('product/list/', ListProducts.as_view(), name='list-products'),
@@ -13,10 +14,14 @@ urlpatterns = [
     path('product/<int:pk>/delete/', DeleteProduct.as_view(), name='delete-product'),
     path('product/image/upload/<int:pk>/', UploadProductImage.as_view(), name='upload-product-image'),
     path('product/image/delete/<int:pk>/', DeleteProductImage.as_view(), name='delete-product-image'),
+    
+    path('admin-login/', AdminLoginView.as_view(), name='admin-login'),
 
-    path('admin/dashboard/', AdminDashboardView.as_view(), name='admin-dashboard'),
-    path('validate-admin/', ValidateAdminView.as_view(), name='validate-admin'),
-    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),    
+    # path('admin/dashboard/', AdminDashboardView.as_view(), name='admin-dashboard'),
+    # path('validate-admin/', ValidateAdminView.as_view(), name='validate-admin'),
+    # path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    # path('custom-login/', CustomLoginView.as_view(), name='custom-login'),  # Add custom login view
+    
 ]
 
 if settings.DEBUG:

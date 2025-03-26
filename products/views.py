@@ -9,9 +9,14 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-
-
-
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
+from django.contrib.auth import authenticate
+from django.middleware.csrf import CsrfViewMiddleware
+# from .models import User
+from rest_framework.authtoken.views import ObtainAuthToken
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 logger = logging.getLogger(__name__)
 
@@ -124,3 +129,57 @@ class ValidateAdminView(APIView):
                 {'error': 'Validation failed'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AdminLoginView(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        if not user.is_staff:
+            logger.warning(f"Unauthorized login attempt by user: {user.username}")
+            return Response({'error': 'Access denied: Not an admin'}, status=403)
+
+        token, created = Token.objects.get_or_create(user=user)
+        logger.info(f"Admin user {user.username} logged in successfully.")
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
+
+# class CustomLoginView(APIView):
+#     permission_classes = [AllowAny]
+
+#     def post(self, request):
+#         username = request.data.get('username')
+#         password = request.data.get('password')
+#         user = authenticate(username=username, password=password)
+        
+#         if user:
+#             return Response({'success': True}, status=200)
+#         return Response({'error': 'Invalid credentials'}, status=400)
+
+        
+# class CustomLoginView(APIView):
+#     permission_classes = [AllowAny]
+#     authentication_classes = []  # Disable authentication for this view
+
+#     def post(self, request, *args, **kwargs):
+#         username = request.data.get('username')
+#         password = request.data.get('password')
+#         user = authenticate(username=username, password=password)
+#         if user is not None:
+#             token, _ = Token.objects.get_or_create(user=user)
+#             return Response({'token': token.key, 'user_id': user.id}, status=status.HTTP_200_OK)
+#         return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+#     def get(self, request, *args, **kwargs):
+#         return Response({'detail': 'Login GET method not supported. Please use the POST method to login.'})
+
+#     def dispatch(self, request, *args, **kwargs):
+#         # Disable CSRF protection for this view
+#         setattr(request, '_dont_enforce_csrf_checks', True)
+#         return super().dispatch(request, *args, **kwargs)

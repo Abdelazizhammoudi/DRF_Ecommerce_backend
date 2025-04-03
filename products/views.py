@@ -10,23 +10,44 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-
-
-
 logger = logging.getLogger(__name__)
 
 # Add Product View (handles multiple images)
 class AddProduct(generics.CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated, IsAdminUser]  # Add proper permissions
     parser_classes = (MultiPartParser, FormParser)
 
+    def create(self, request, *args, **kwargs):
+        try:
+            # Transform field names to match model
+            request.data._mutable = True
+            if 'availableStock' in request.data:
+                request.data['AvailableStock'] = request.data.pop('availableStock')
+            
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            
+            # Handle image uploads
+            images = request.FILES.getlist('images')
+            product = serializer.instance
+            for image in images:
+                ProductImage.objects.create(product=product, image=image)
+                
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            
+        except Exception as e:
+            logger.error(f"Error adding product: {str(e)}")
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
     def perform_create(self, serializer):
-        product = serializer.save()
-        images = self.request.FILES.getlist('images')
-        for image in images:
-            ProductImage.objects.create(product=product, image=image)
+        serializer.save()
 
 # Update Product View
 class ModifyProduct(generics.UpdateAPIView):

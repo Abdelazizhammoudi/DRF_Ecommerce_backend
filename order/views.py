@@ -2,7 +2,7 @@ from rest_framework import generics, permissions, status
 from .models import Order
 from .serializers import OrderSerializer
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser
 
 # Create Order (Public)
 class OrderCreateView(generics.CreateAPIView):
@@ -18,7 +18,7 @@ class OrderCreateView(generics.CreateAPIView):
 class OrderListView(generics.ListAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]  # Requires authentication
+    permission_classes = [permissions.IsAdminUser]  # Requires authentication
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

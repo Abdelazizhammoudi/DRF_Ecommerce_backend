@@ -28,7 +28,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'price', 'images', 'uploaded_images']
+        fields = ['id', 'name', 'description', 'price', 
+        'images', 'uploaded_images', 'available_stock', 'quantity']
         extra_kwargs = {
             'name': {'required': True},
             'description': {'required': True},
@@ -47,9 +48,13 @@ class ProductSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         uploaded_images = validated_data.pop('uploaded_images', [])
         
+        # Update the product instance
         instance = super().update(instance, validated_data)
         
+        # Add new images
         for image in uploaded_images:
             ProductImage.objects.create(product=instance, image=image)
-            
+        
+        # Return the updated instance
         return instance
+

@@ -93,7 +93,7 @@ class UploadProductImage(generics.CreateAPIView):
 class UpdateProductImage(generics.UpdateAPIView):
     queryset = ProductImage.objects.all()
     serializer_class = ProductImageSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
     lookup_field = 'pk'
 

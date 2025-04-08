@@ -100,8 +100,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # React frontend
     "http://127.0.0.1:5173",
     "http://localhost:3000",  # React frontend
-    # "http://0.0.0.0:8000", 
+    "http://0.0.0.0:8000", 
     "http://localhost:8000",  # Django backend
+    "http://192.168.2.207:5173",  # React frontend
+    "http://172.22.48.1:5173",
 ]
 
 CORS_ALLOW_METHODS = [

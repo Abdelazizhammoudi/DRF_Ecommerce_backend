@@ -25,8 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-x-+af4an)od)u+%vxuiz9!4s=h+x_buy^$n956@!bbbwpv@i=c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
 
@@ -78,19 +77,29 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ecommerce_backend.wsgi.application'
+SECRET_KEY = os.environ.get('SECRET_KEY') 
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'wassim_db_c3zw',
+        'USER': 'wassim_db_c3zw_user',
+        'PASSWORD': '1cYLX89ACzqVWtdon62w22jUQLXI6SKY',
+        'HOST': 'dpg-cvogpgruibrs73bqpgvg-a.oregon-postgres.render.com',
+        'PORT': '5432',
     }
 }
-
-
 
 
 ...
@@ -104,6 +113,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",  # Django backend
     "http://192.168.2.207:5173",  # React frontend
     "http://172.22.48.1:5173",
+    "https://sm-shope.netlify.app/",
 ]
 
 CORS_ALLOW_METHODS = [

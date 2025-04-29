@@ -21,7 +21,8 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(','
 CSRF_TRUSTED_ORIGINS = [
     'https://sm-shope.netlify.app',
     'https://*.onrender.com',
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'sm-shop.onrender.com',
 ]
 
 # Application Definition
@@ -111,6 +112,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://sm-shope.netlify.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "sm-shop.onrender.com",
 ]
 
 # Static & Media Files

@@ -90,17 +90,27 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'wassim_db_c3zw',
+#         'USER': 'wassim_db_c3zw_user',
+#         'PASSWORD': '1cYLX89ACzqVWtdon62w22jUQLXI6SKY',
+#         'HOST': 'dpg-cvogpgruibrs73bqpgvg-a.oregon-postgres.render.com',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'wassim_db_c3zw',
-        'USER': 'wassim_db_c3zw_user',
-        'PASSWORD': '1cYLX89ACzqVWtdon62w22jUQLXI6SKY',
-        'HOST': 'dpg-cvogpgruibrs73bqpgvg-a.oregon-postgres.render.com',
-        'PORT': '5432',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
-
 
 ...
 # CORS settings

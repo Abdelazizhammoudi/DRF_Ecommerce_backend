@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: sm-shop
+    env: python
+    buildCommand: pip install -r requirements.txt 
+    startCommand: gunicorn ecommerce_backend.wsgi:application

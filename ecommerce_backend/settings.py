@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-x-+af4an)od)u+%vxuiz9!4s=h+x_buy^$n956@!bbbwpv@i=c
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['your-render-app.onrender.com', 'sm-shope.netlify.app']
+CSRF_TRUSTED_ORIGINS = ['https://*.netlify.app', 'https://*.onrender.com']
 
 
 # Application definition
@@ -123,8 +125,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",  # Django backend
     "http://192.168.2.207:5173",  # React frontend
     "http://172.22.48.1:5173",
-    "https://sm-shope.netlify.app/",
+    "https://sm-shope.netlify.app",
 ]
+
+
 
 CORS_ALLOW_METHODS = [
     "GET",
@@ -191,6 +195,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': [

@@ -16,3 +16,7 @@ services:
         fromDatabase:
           name: wassim_db_c3zw
           property: connectionString
+      - key: ALLOWED_HOSTS
+        value: "sm-shop.onrender.com,sm-shope.netlify.app"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://sm-shop.onrender.com,https://sm-shope.netlify.app"

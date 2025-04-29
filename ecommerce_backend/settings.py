@@ -1,32 +1,50 @@
 """
-Django settings for ecommerce_backend project.
+Django production settings for ecommerce_backend project.
 """
 
 from pathlib import Path
 import os
 import dj_database_url
-
-# At the top of settings.py
 from dotenv import load_dotenv
 
-load_dotenv()  # Load environment variables from .env file
+# Load environment variables from .env file
+load_dotenv()
 
-# Build paths
+# Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security Settings
+# ========================
+# SECURITY CONFIGURATION
+# ========================
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-dev-only')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
-CSRF_TRUSTED_ORIGINS = [
-    'https://sm-shope.netlify.app',
-    'https://*.onrender.com',
-    'http://localhost:5173',
+
+# Host configuration
+ALLOWED_HOSTS = [
     'sm-shop.onrender.com',
+    'sm-shope.netlify.app',
+    'localhost',
+    '127.0.0.1'
 ]
 
-# Application Definition
+# Cross-Origin configurations
+CSRF_TRUSTED_ORIGINS = [
+    'https://sm-shop.onrender.com',
+    'https://sm-shope.netlify.app'
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://sm-shope.netlify.app",
+    "https://sm-shop.onrender.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
+
+# ========================
+# APPLICATION DEFINITION
+# ========================
 INSTALLED_APPS = [
+    # Django core apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -34,19 +52,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # 3rd Party
+    # Third-party apps
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     
-    # Local
+    # Local apps
     'order',
     'products',
 ]
 
 MIDDLEWARE = [
+    # Security middleware
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    
+    # Django core middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,7 +79,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ecommerce_backend.urls'
 
-# Database configuration
+# ========================
+# DATABASE CONFIGURATION
+# ========================
 if DEBUG:
     # Local SQLite configuration
     DATABASES = {
@@ -68,29 +91,18 @@ if DEBUG:
         }
     }
 else:
-    # Production PostgreSQL configuration
+    # Production PostgreSQL configuration (Render.com)
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
-            'HOST': os.environ.get('DB_HOST'),
-            'PORT': os.environ.get('DB_PORT'),
-        }
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True
+        )
     }
 
-
-
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default='postgresql://user:pass@localhost/dbname',
-#         conn_max_age=600,
-#         ssl_require=not DEBUG
-#     )
-# }
-
-# REST Framework
+# ========================
+# REST FRAMEWORK SETTINGS
+# ========================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -100,22 +112,12 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ] if not DEBUG else [
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    ]
+    ] + (['rest_framework.renderers.BrowsableAPIRenderer'] if DEBUG else [])
 }
 
-# CORS Settings
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "https://sm-shope.netlify.app",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "sm-shop.onrender.com",
-]
-
-# Static & Media Files
+# ========================
+# STATIC & MEDIA FILES
+# ========================
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -123,19 +125,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Security Headers
-if not DEBUG:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'DENY'
-
-# Templates
+# ========================
+# TEMPLATES CONFIGURATION
+# ========================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -152,9 +144,41 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ecommerce_backend.wsgi.application'
+# ========================
+# PRODUCTION SECURITY
+# ========================
+if not DEBUG:
+    # HTTPS Settings
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    # HSTS Settings
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Other security headers
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
 
-# Password Validation
+# ========================
+# INTERNATIONALIZATION
+# ========================
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+
+# ========================
+# DEFAULT AUTO FIELD
+# ========================
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ========================
+# PASSWORD VALIDATION
+# ========================
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -162,11 +186,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
-
-# Default primary key
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# ========================
+# WSGI CONFIGURATION
+# ========================
+WSGI_APPLICATION = 'ecommerce_backend.wsgi.application'

@@ -1,6 +1,6 @@
 # setup server
 # 1: start docker kernal + python
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # Set environment variables
 # ENV show lgs
@@ -8,7 +8,6 @@ ENV PYTHONUNBUFFERED=1
 
 # 4: create project folder inside the kernal (app)
 WORKDIR /app
-
 # 5: copy requirements.txt file to the app folder
 
 COPY requirements.txt ./app/requirements.txt

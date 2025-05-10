@@ -12,17 +12,13 @@ load_dotenv()
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# ========================
+=
 # SECURITY CONFIGURATION
-# ========================
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-dev-only')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = True
 
 # Host configuration
 ALLOWED_HOSTS = [
-    'sm-shop.onrender.com',
-    'sm-shope.netlify.app',
     'localhost',
     '127.0.0.1'
 ]
@@ -34,15 +30,12 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://sm-shope.netlify.app",
-    "https://sm-shop.onrender.com",
     "http://localhost:5173",
     "http://127.0.0.1:5173"
 ]
 
-# ========================
+
 # APPLICATION DEFINITION
-# ========================
 INSTALLED_APPS = [
     # Django core apps
     'django.contrib.admin',
@@ -66,7 +59,6 @@ MIDDLEWARE = [
     # Security middleware
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    
     # Django core middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -79,35 +71,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ecommerce_backend.urls'
 
-# ========================
+
 # DATABASE CONFIGURATION
-# ========================
-
-if DEBUG:
-    # Local SQLite configuration
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    # Production PostgreSQL configuration
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
-            'HOST': os.environ.get('DB_HOST'),
-            'PORT': os.environ.get('DB_PORT'),
-        }
-    }
+}
 
-
-# ========================
 # REST FRAMEWORK SETTINGS
-# ========================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -120,9 +93,8 @@ REST_FRAMEWORK = {
     ] + (['rest_framework.renderers.BrowsableAPIRenderer'] if DEBUG else [])
 }
 
-# ========================
+
 # STATIC & MEDIA FILES
-# ========================
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -132,7 +104,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # ========================
 # TEMPLATES CONFIGURATION
-# ========================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -149,9 +120,8 @@ TEMPLATES = [
     },
 ]
 
-# ========================
 # PRODUCTION SECURITY
-# ========================
+
 if not DEBUG:
     # HTTPS Settings
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -168,22 +138,13 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
 
-# ========================
-# INTERNATIONALIZATION
-# ========================
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
-
-# ========================
 # DEFAULT AUTO FIELD
-# ========================
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ========================
+
 # PASSWORD VALIDATION
-# ========================
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -191,7 +152,13 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# ========================
 # WSGI CONFIGURATION
-# ========================
+
 WSGI_APPLICATION = 'ecommerce_backend.wsgi.application'
+
+# INTERNATIONALIZATION
+
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True

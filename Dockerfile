@@ -1,6 +1,6 @@
 # setup server
 # 1: start docker kernal + python
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Set environment variables
 # ENV show lgs
